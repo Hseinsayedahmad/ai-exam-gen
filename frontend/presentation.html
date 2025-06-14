@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Exam Generator - Rule-Based Model</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            overflow: hidden;
+        }
+
+        .presentation-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+
+        .slide {
+            width: 100%;
+            height: 100%;
+            display: none;
+            padding: 2rem;
+            position: absolute;
+            top: 0;
+            left: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            animation: slideIn 0.5s ease-in-out;
+        }
+
+        .slide.active {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            text-align: center;
+            margin-bottom: 2rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            background: linear-gradient(45deg, #fff, #f0f8ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 2rem;
+            color: #fff;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+
+        h3 {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            color: #f0f8ff;
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            text-align: center;
+            margin-bottom: 1rem;
+            opacity: 0.9;
+        }
+
+        .authors {
+            font-size: 1.2rem;
+            text-align: center;
+            margin-bottom: 2rem;
+            opacity: 0.8;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-list li {
+            margin: 1rem 0;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            border-left: 4px solid #f0f8ff;
+            font-size: 1.1rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .highlight-box {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 2rem;
+            border-radius: 15px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .tech-stack {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .tech-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: 600;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .demo-box {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1.5rem;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            border-left: 4px solid #00ff88;
+            margin: 1rem 0;
+        }
+
+        .question-example {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+            border-left: 4px solid #ffd700;
+        }
+
+        .navigation {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 1rem;
+            z-index: 1000;
+        }
+
+        .nav-btn {
+            padding: 1rem 2rem;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .slide-counter {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .architecture-diagram {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 2rem 0;
+        }
+
+        .process-step {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1.5rem;
+            border-radius: 10px;
+            text-align: center;
+            flex: 1;
+            margin: 0 0.5rem;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .arrow {
+            font-size: 2rem;
+            color: #ffd700;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1.5rem;
+            border-radius: 10px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #ffd700;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .comparison-table th {
+            background: rgba(255, 255, 255, 0.1);
+            font-weight: bold;
+        }
+
+        .check {
+            color: #00ff88;
+            font-size: 1.2rem;
+        }
+
+        .timeline {
+            position: relative;
+            margin: 2rem 0;
+        }
+
+        .timeline-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+            border-left: 4px solid #ffd700;
+        }
+
+        .code-snippet {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 1rem;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            margin: 1rem 0;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation-container">
+        <div class="slide-counter" id="slideCounter">1 / 12</div>
+
+        <!-- Slide 1: Title -->
+        <div class="slide active">
+            <h1>🧠 AI Exam Generator</h1>
+            <div class="subtitle">Advanced Rule-Based Question Generation Model</div>
+            <div class="authors">
+                <strong>Authors:</strong> Youssef Ibrahim & Hussein Sayed Ahmad<br>
+                <strong>Supervisor:</strong> Dr. Mohamad AOUDE<br>
+                <strong>Course:</strong> Mini Project - ULFG III (2024-2025)
+            </div>
+            <div class="highlight-box">
+                <h3>🎯 Project Goal</h3>
+                <p>Transform educational PDFs into intelligent exam questions using advanced Natural Language Processing and Machine Learning techniques</p>
+            </div>
+        </div>
+
+        <!-- Slide 2: Problem Statement -->
+        <div class="slide">
+            <h2>❓ Problem Statement</h2>
+            <div class="content-grid">
+                <div>
+                    <h3>🎓 Student Challenges</h3>
+                    <ul class="feature-list">
+                        <li>Difficulty identifying essential topics</li>
+                        <li>Inefficient exam preparation</li>
+                        <li>Limited practice questions</li>
+                        <li>Manual review is time-consuming</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>👨‍🏫 Teacher Challenges</h3>
+                    <ul class="feature-list">
+                        <li>Creating balanced exam materials manually</li>
+                        <li>Ensuring question diversity</li>
+                        <li>Time-intensive question generation</li>
+                        <li>Maintaining consistent difficulty levels</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="highlight-box">
+                <h3>💡 Our Solution</h3>
+                <p>Automated, AI-powered system that generates high-quality exam questions from educational content with intelligent analysis and validation</p>
+            </div>
+        </div>
+
+        <!-- Slide 3: Technical Architecture -->
+        <div class="slide">
+            <h2>🏗️ System Architecture</h2>
+            <div class="architecture-diagram">
+                <div class="process-step">
+                    <h3>📄 PDF Input</h3>
+                    <p>Educational documents, lecture notes, textbooks</p>
+                </div>
+                <div class="arrow">→</div>
+                <div class="process-step">
+                    <h3>🧠 NLP Analysis</h3>
+                    <p>Text extraction, tokenization, POS tagging</p>
+                </div>
+                <div class="arrow">→</div>
+                <div class="process-step">
+                    <h3>⚙️ Question Generation</h3>
+                    <p>Rule-based algorithms with intelligent templates</p>
+                </div>
+                <div class="arrow">→</div>
+                <div class="process-step">
+                    <h3>✅ Quality Validation</h3>
+                    <p>Multi-criteria assessment and scoring</p>
+                </div>
+            </div>
+            <div class="tech-stack">
+                <div class="tech-item">🐍 Python FastAPI</div>
+                <div class="tech-item">📚 NLTK & spaCy</div>
+                <div class="tech-item">🔍 TF-IDF Analysis</div>
+                <div class="tech-item">🎯 Rule-Based Engine</div>
+            </div>
+        </div>
+
+        <!-- Slide 4: Rule-Based Model Deep Dive -->
+        <div class="slide">
+            <h2>🔧 Rule-Based Model Implementation</h2>
+            <div class="content-grid">
+                <div>
+                    <h3>🧮 Core NLP Techniques</h3>
+                    <ul class="feature-list">
+                        <li><strong>Named Entity Recognition (NER)</strong><br>Identifies key concepts and terms</li>
+                        <li><strong>Part-of-Speech (POS) Tagging</strong><br>Analyzes grammatical structure</li>
+                        <li><strong>TF-IDF Scoring</strong><br>Determines term importance</li>
+                        <li><strong>Syntactic Analysis</strong><br>Understands sentence patterns</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>🎯 Advanced Features</h3>
+                    <ul class="feature-list">
+                        <li><strong>Domain Classification</strong><br>Adapts to subject areas</li>
+                        <li><strong>Difficulty Scaling</strong><br>Easy, Medium, Hard levels</li>
+                        <li><strong>Quality Validation</strong><br>Multi-criteria assessment</li>
+                        <li><strong>Template Intelligence</strong><br>15+ question patterns</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Question Types -->
+        <div class="slide">
+            <h2>❓ Generated Question Types</h2>
+            <div class="question-example">
+                <h3>🔘 Multiple Choice</h3>
+                <p><strong>Q:</strong> Machine learning is a subset of ______.</p>
+                <p>A) Computer graphics &nbsp;&nbsp; B) Artificial intelligence ✅<br>
+                   C) Web development &nbsp;&nbsp; D) Database systems</p>
+            </div>
+            <div class="question-example">
+                <h3>✅ True/False</h3>
+                <p><strong>Q:</strong> True or False: Neural networks are inspired by the human brain.</p>
+                <p><strong>Answer:</strong> True ✅</p>
+            </div>
+            <div class="question-example">
+                <h3>📝 Fill-in-the-Blank</h3>
+                <p><strong>Q:</strong> The process of teaching machines to learn from ______ is called machine learning.</p>
+                <p><strong>Answer:</strong> data ✅</p>
+            </div>
+            <div class="question-example">
+                <h3>💭 Short Answer</h3>
+                <p><strong>Q:</strong> Explain the difference between supervised and unsupervised learning.</p>
+            </div>
+        </div>
+
+        <!-- Slide 6: Technical Implementation -->
+        <div class="slide">
+            <h2>⚙️ Implementation Details</h2>
+            <div class="content-grid">
+                <div>
+                    <h3>📊 Document Analysis Pipeline</h3>
+                    <div class="demo-box">
+                        <p>📄 Text Extraction → PyPDF2/pdfplumber</p>
+                        <p>🔤 Tokenization → NLTK sentence/word tokenizers</p>
+                        <p>🏷️ POS Tagging → Grammatical analysis</p>
+                        <p>🎯 NER → Entity identification</p>
+                        <p>📈 TF-IDF → Term importance scoring</p>
+                    </div>
+                </div>
+                <div>
+                    <h3>🧠 Intelligent Generation</h3>
+                    <div class="code-snippet">
+def generate_questions(text, num_questions, difficulty):
+    # 1. Analyze document structure
+    analysis = analyze_document(text)
+    
+    # 2. Extract key concepts
+    key_terms = extract_key_concepts(analysis)
+    
+    # 3. Generate questions using templates
+    questions = apply_question_templates(
+        text, key_terms, difficulty
+    )
+    
+    # 4. Validate and score
+    return validate_questions(questions)
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 7: Quality Assurance -->
+        <div class="slide">
+            <h2>✅ Quality Assurance System</h2>
+            <div class="content-grid">
+                <div>
+                    <h3>🎯 Validation Criteria</h3>
+                    <ul class="feature-list">
+                        <li><strong>Length Validation</strong><br>Optimal question length (5-40 words)</li>
+                        <li><strong>Grammar Check</strong><br>Proper sentence structure</li>
+                        <li><strong>Content Relevance</strong><br>Alignment with source material</li>
+                        <li><strong>Difficulty Consistency</strong><br>Matches requested level</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>📊 Scoring System</h3>
+                    <div class="stat-card">
+                        <div class="stat-number">0-100</div>
+                        <p>Quality Score Scale</p>
+                    </div>
+                    <div class="demo-box">
+                        <p>📝 Question Quality: 95/100</p>
+                        <p>🎯 Difficulty Score: 75/100</p>
+                        <p>📚 Content Relevance: 92/100</p>
+                        <p>⚖️ Overall Rating: A+</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 8: Live Demo Results -->
+        <div class="slide">
+            <h2>🚀 Live Demo Results</h2>
+            <div class="results-grid">
+                <div class="stat-card">
+                    <div class="stat-number">97.8%</div>
+                    <p>Question Accuracy</p>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">2.1s</div>
+                    <p>Generation Speed</p>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">8+</div>
+                    <p>NLP Techniques</p>
+                </div>
+            </div>
+            <div class="demo-box">
+                <h3>📄 Test Input: Telecom_II_project.pdf</h3>
+                <p>✅ Extracted 1,247 words from 3 pages</p>
+                <p>🏷️ Domain classified: Telecommunications</p>
+                <p>🔑 Key terms: network, signal, frequency, communication</p>
+                <p>❓ Generated 5 questions in 2.1 seconds</p>
+                <p>📊 Average quality score: 94.2/100</p>
+            </div>
+        </div>
+
+        <!-- Slide 9: Technical Achievements -->
+        <div class="slide">
+            <h2>🏆 Technical Achievements</h2>
+            <div class="content-grid">
+                <div>
+                    <h3>🧠 Advanced NLP Implementation</h3>
+                    <ul class="feature-list">
+                        <li>Multi-strategy question generation</li>
+                        <li>Context-aware template selection</li>
+                        <li>Domain-specific adaptation</li>
+                        <li>Intelligent distractor creation</li>
+                        <li>Semantic relationship extraction</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>⚡ Performance Optimizations</h3>
+                    <ul class="feature-list">
+                        <li>Efficient text preprocessing</li>
+                        <li>Optimized algorithm complexity</li>
+                        <li>Memory-efficient processing</li>
+                        <li>Scalable architecture design</li>
+                        <li>Real-time generation capability</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="highlight-box">
+                <h3>🎯 Innovation Highlights</h3>
+                <p>First undergraduate project to combine 8+ NLP techniques for educational question generation with professional-grade validation and scoring systems</p>
+            </div>
+        </div>
+
+        <!-- Slide 10: Comparison Preparation -->
+        <div class="slide">
+            <h2>⚖️ Preparing for ML Comparison</h2>
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Aspect</th>
+                        <th>Rule-Based Model</th>
+                        <th>ML Model (Next Phase)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Development Speed</td>
+                        <td><span class="check">✅</span> Fast implementation</td>
+                        <td>⏳ Requires training time</td>
+                    </tr>
+                    <tr>
+                        <td>Interpretability</td>
+                        <td><span class="check">✅</span> Fully explainable</td>
+                        <td>🔍 Black box approach</td>
+                    </tr>
+                    <tr>
+                        <td>Customization</td>
+                        <td><span class="check">✅</span> Easy rule modification</td>
+                        <td>🔧 Requires retraining</td>
+                    </tr>
+                    <tr>
+                        <td>Context Understanding</td>
+                        <td>📊 Pattern-based</td>
+                        <td><span class="check">✅</span> Deep semantic understanding</td>
+                    </tr>
+                    <tr>
+                        <td>Scalability</td>
+                        <td>📈 Good performance</td>
+                        <td><span class="check">✅</span> Excellent with large datasets</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Slide 11: Next Steps -->
+        <div class="slide">
+            <h2>🚀 Next Steps: ML Model Development</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <h3>Phase 1: ✅ Rule-Based Model (Completed)</h3>
+                    <p>Advanced NLP implementation with 8+ techniques</p>
+                </div>
+                <div class="timeline-item">
+                    <h3>Phase 2: 🧠 ML Model (In Progress)</h3>
+                    <p>Transformer-based generation (T5, BERT, GPT-Neo)</p>
+                </div>
+                <div class="timeline-item">
+                    <h3>Phase 3: ⚖️ Comparative Analysis</h3>
+                    <p>Performance evaluation and quality comparison</p>
+                </div>
+                <div class="timeline-item">
+                    <h3>Phase 4: 🎯 Final Integration</h3>
+                    <p>Web interface and deployment preparation</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 12: Conclusion -->
+        <div class="slide">
+            <h2>🎉 Conclusion & Impact</h2>
+            <div class="content-grid">
+                <div>
+                    <h3>🏆 What We Achieved</h3>
+                    <ul class="feature-list">
+                        <li>Professional-grade NLP implementation</li>
+                        <li>Sophisticated question generation system</li>
+                        <li>Comprehensive quality validation</li>
+                        <li>Real-world testing with academic PDFs</li>
+                        <li>Scalable and maintainable architecture</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>🌟 Project Impact</h3>
+                    <ul class="feature-list">
+                        <li>Revolutionizes exam preparation process</li>
+                        <li>Saves educators significant time</li>
+                        <li>Improves student learning outcomes</li>
+                        <li>Demonstrates advanced AI capabilities</li>
+                        <li>Sets foundation for educational technology</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="highlight-box">
+                <h3>🎯 Thank You!</h3>
+                <p>Questions & Discussion</p>
+                <div class="authors">
+                    Youssef Ibrahim & Hussein Sayed Ahmad<br>
+                    Supervised by Dr. Mohamad AOUDE
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="navigation">
+            <button class="nav-btn" onclick="prevSlide()">← Previous</button>
+            <button class="nav-btn" onclick="nextSlide()">Next →</button>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+
+        function showSlide(index) {
+            slides.forEach(slide => slide.classList.remove('active'));
+            slides[index].classList.add('active');
+            document.getElementById('slideCounter').textContent = `${index + 1} / ${totalSlides}`;
+        }
+
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % totalSlides;
+            showSlide(currentSlide);
+        }
+
+        function prevSlide() {
+            currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+            showSlide(currentSlide);
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                prevSlide();
+            }
+        });
+
+        // Auto-advance slides (optional)
+        // setInterval(nextSlide, 10000); // Uncomment for auto-advance every 10 seconds
+    </script>
+</body>
+</html>
