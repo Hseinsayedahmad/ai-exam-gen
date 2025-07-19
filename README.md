@@ -33,20 +33,6 @@ Python 3.8 or higher
 pip package manager
 Internet connection (for Gemini API)
 
-Installation
-
-Clone the repository
-bashgit clone https://github.com/yourusername/ai-exam-generator.git
-cd ai-exam-generator
-
-Install dependencies
-bashpip install streamlit PyPDF2 reportlab requests
-
-Run the application
-bashstreamlit run main_app.py
-
-Access the application
-
 Open your browser to http://localhost:8501
 Login with demo credentials: Username: Hsein | Password: 6368
 
