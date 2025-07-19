@@ -35,8 +35,8 @@ except ImportError:
 EMAIL_CONFIG = {
     "smtp_server": "smtp.gmail.com",
     "smtp_port": 587,
-    "email": "hseinsa57@gmail.com",  # 🔴 UPDATE WITH YOUR GMAIL
-    "password": "htvc jjbc wfyu nlhz",  # 🔴 UPDATE WITH YOUR APP PASSWORD
+    "email": "",  # 🔴 UPDATE WITH YOUR GMAIL
+    "password": "",  # 🔴 UPDATE WITH YOUR APP PASSWORD
     "from_name": "AI Exam Generator Support"
 }
 
@@ -1143,8 +1143,8 @@ def login_page():
         with st.expander("📋 Access Information"):
             st.info("""
             ### 🔧 Admin Access
-            **Username:** `Hsein`  
-            **Password:** `6368`
+            **Username:** ``  
+            **Password:** ``
             
             ### 🆕 Features Available:
             - 🖥️ **Interactive Exams:** Complete online exam system
